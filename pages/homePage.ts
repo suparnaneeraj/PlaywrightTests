@@ -20,6 +20,9 @@ export class HomePage{
         await this.page.getByText(' Global Feed ').click()
         return this.page.locator('.preview-link h1').first()
     }
+    async getFirstArticleOnTheList(){
+        await this.page.locator('div.article-preview h1').first().textContent()
+    }
 
 
 }

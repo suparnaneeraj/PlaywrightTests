@@ -8,4 +8,11 @@ export class ArticlePage{
     async getCreatedArticleName(){
         return this.page.locator('.container h1')
     }
+    async getTags(){
+        return this.page.locator('.tag-pill').allTextContents()
+    }
+    async deleteArticle(){
+        await this.page.locator('div.container').filter({has:this.page.locator('h1')}).getByRole('button',{name:'Delete Article'}).click()
+    }
+
 }
