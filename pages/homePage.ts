@@ -1,4 +1,5 @@
 import {Page} from '@playwright/test'
+import { text } from 'stream/consumers'
 
 export class HomePage{
     private readonly page: Page
@@ -7,9 +8,10 @@ export class HomePage{
         this.page=page
     }
     async getPopularTags(){
-        const tags= this.page.locator('div.sidebar').filter({has:this.page.locator('p',{hasText:'Popular Tags'})}).locator('.tag-default').all()
-    
-    }
+            return this.page.locator('div.sidebar .tag-pill')
+       }
+
+
     async clickOnNewArticle(){
         await this.page.getByText('New Article').click()
     }
@@ -21,8 +23,13 @@ export class HomePage{
         return this.page.locator('.preview-link h1').first()
     }
     async getFirstArticleOnTheList(){
-        await this.page.locator('div.article-preview h1').first().textContent()
+        return this.page.locator('div.article-preview h1').first().textContent()
     }
 
+    async clickOnFirstArticle(){
+        return await this.page.locator('div.article-preview h1').first().click()
+    }
+
+    
 
 }
