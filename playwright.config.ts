@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import dotenv from 'dotenv'
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -11,7 +11,14 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+dotenv.config({
+  path: `./env/.env`,
+});
+
 export default defineConfig({
+  use:{
+    baseURL: process.env.BASE_URL
+  },
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,

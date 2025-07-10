@@ -1,11 +1,13 @@
 import {test,expect} from '@playwright/test'
 import { PageManager } from '../pages/pageManager'
-import { execPath } from 'process'
+
+const username  =   process.env.USERNAME!
+const password  =   process.env.PASSWORD!
 
 test.beforeEach(async({page})=>{
-    await page.goto('https://conduit.bondaracademy.com/')
+    //await page.goto('https://conduit.bondaracademy.com/')
     const pageManager=new PageManager(page)
-    await pageManager.onLoginPage().loginWithEmailAndPassword('playwright_automation@test.com','Automation1')
+    await pageManager.onLoginPage().loginWithEmailAndPassword(username,password)
 })
 test('should be able to create a new article without tags successfully',async({page})=>{
     const pageManager=new PageManager(page)
@@ -67,3 +69,14 @@ test.afterEach(async({page})=>{
 
     await pageManager.onArticlePage().deleteArticle()
 })
+
+
+
+/* Thngs to do here
+- I need to set up base url in config.ts
+- use the env variables to store username and password-- first hardcode 
+- use workflow file to get the password and username from secrets
+-   add more tests
+- refactor
+
+    */
