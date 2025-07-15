@@ -16,9 +16,6 @@ dotenv.config({
 });
 
 export default defineConfig({
-  use:{
-    baseURL: process.env.BASE_URL
-  },
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -36,6 +33,7 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: process.env.APP_URL,
     trace: 'on-first-retry',
   },
 

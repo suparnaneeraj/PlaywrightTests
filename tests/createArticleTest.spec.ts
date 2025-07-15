@@ -73,8 +73,7 @@ test.afterEach(async({page})=>{
 
 
 /* Thngs to do here
-- I need to set up base url in config.ts
-- use the env variables to store username and password-- first hardcode 
+- perform login and other pre requisite using APIs - created API tests
 - use workflow file to get the password and username from secrets
 -   add more tests
 - refactor
