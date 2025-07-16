@@ -1,0 +1,10 @@
+# IDE
+.idea
+.DS_Store
+.vscode
+
+### Gradle ###
+node_modules
+playwright-report
+downloads
+test-results
