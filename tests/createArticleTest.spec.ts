@@ -5,6 +5,7 @@ const username  =   process.env.USERNAME!
 const password  =   process.env.PASSWORD!
 
 test.beforeEach(async({page})=>{
+    //await page.goto('https://conduit.bondaracademy.com/')
     const pageManager=new PageManager(page)
     await pageManager.onLoginPage().loginWithEmailAndPassword(username,password)
 })
