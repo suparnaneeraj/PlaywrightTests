@@ -4,7 +4,7 @@
 
 ### Gradle ###
 
-node_modules/
-playwright-report/
-downloads/
-test-results/
+node_modules
+playwright-report
+downloads
+test-results
