@@ -16,29 +16,32 @@ export class CreateArticlePage{
         this.submitArticleButton    =   this.page.getByRole('button');
         this.tagsField  =   this.page.getByPlaceholder('Enter tags');
     }
-    async createNewArticleWithoutTags(articleTitle:string,articleOverview:string,articleDescription:string){
+
+    async createNewArticle(articleTitle:string,articleOverview:string,articleDescription:string,tags?:string[]){
         await this.articleTitleField.fill(articleTitle);
         await this.articleOverviewField.fill(articleOverview);
         await this.articleDescriptionField.fill(articleDescription);
+        if (tags && tags.length > 0) {
+            for (const tag of tags) {
+            await this.tagsField.fill(tag);
+            await this.page.keyboard.press('Enter');
+            }
+        }
         await this.submitArticleButton.click();
     }
-    async createNewArticleWithSingleTag(articleTitle:string,articleOverview:string,articleDescription:string,tag:string){
-        await this.articleTitleField.fill(articleTitle);
-        await this.articleOverviewField.fill(articleOverview);
-        await this.articleDescriptionField.fill(articleDescription);
-        await this.tagsField.fill(tag);
+
+    async editArticle(newArticleName:string, newDescription:string,  newTag:string){
+        await this.articleTitleField.clear();
+        await this.articleTitleField.fill(newArticleName);
+        await this.articleDescriptionField.clear()
+        await this.articleDescriptionField.fill(newDescription);
+        await this.tagsField.fill(newTag);
+        await this.page.keyboard.press('Enter');  
         await this.submitArticleButton.click();
     }
-    async createNewArticleWithMultipleTag(articleTitle:string,articleOverview:string,articleDescription:string,tag1:string,tag2:string,tag3:string){
-        await this.articleTitleField.fill(articleTitle);
-        await this.articleOverviewField.fill(articleOverview);
-        await this.articleDescriptionField.fill(articleDescription);
-        await this.tagsField.fill(tag1);
-        await this.page.keyboard.press('Enter');  // need to refactor
-        await this.tagsField.fill(tag2);
-        await this.page.keyboard.press('Enter');
-        await this.tagsField.fill(tag3);
-        await this.page.keyboard.press('Enter');
-        await this.submitArticleButton.click();
+
+    getArticleNameInEditPage():Locator{
+        return this.articleTitleField;
     }
 }
+
