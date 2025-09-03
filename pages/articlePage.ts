@@ -7,20 +7,24 @@ export class ArticlePage{
     private tags: Locator;
     private deleteArticleButton: Locator;
     private homePageLink: Locator;
-
+    private editArticleButton:  Locator;
+    private articleDescription:Locator;
     constructor(page:Page){
         this.page   =   page;
         this.createdArticleName =   this.page.locator('.container h1');
         this.tags   =   this.page.locator('.tag-pill');
         this.deleteArticleButton    =   this.page.locator('div.container').filter({has:this.page.locator('h1')}).getByRole('button',{name:'Delete Article'});
         this.homePageLink   =   this.page.getByText('Home');
+        this.editArticleButton =   this.page.locator('div.container').filter({has:this.page.locator('h1')}).getByText('Edit Article');
+        this.articleDescription =   this.page.locator('.article-content').locator('p');
+    
     }
 
     async getCreatedArticleName(){
-        return await this.createdArticleName.textContent();
+        return  this.createdArticleName;
     }
-    async getTags(){
-        return await this.tags.allTextContents();
+    getTags():Locator{
+        return this.tags;
     }
     async deleteArticle(){
         await this.deleteArticleButton.click();
@@ -28,6 +32,17 @@ export class ArticlePage{
 
     async goToHomePage(){
         await this.homePageLink.click();
+    }
+
+    async clickEditArticleButton(articleName:string){
+        await this.editArticleButton.click();
+    }
+
+    async getArticleDetails(){
+        const articleNameLocator=await this.createdArticleName.textContent();
+        const articleDescriptionLocator=await this.articleDescription.textContent();
+        const tags= await this.tags.allTextContents();
+        return [articleNameLocator,articleDescriptionLocator,tags];
     }
 
 }

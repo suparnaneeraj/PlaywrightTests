@@ -1,13 +1,37 @@
-import test from '@playwright/test'
+import {test,Page, expect } from '@playwright/test'
 import { PageManager } from '../pages/pageManager'
-import { LoginAPI } from '../api/login.api'
 
-test.beforeEach(async({page})=>{
-    const pageManager= new PageManager(page)
-    const loginAPI=new LoginAPI(page.request)
-    const userToken=await loginAPI.loginToApp()
-
+const username=process.env.USERNAME!;
+const password=process.env.PASSWORD!
+let articleName='NewArticleToedit';
+let articleOverview='ArticleOverview';
+let articleDescription='NewArticleDescription';
+let tag=['NewTag'];
+let newarticleName='NewArticleToedit1';
+let newarticleDescription='NewArticleDescription1';
+let newtag='NewTag1';
+let page:Page;
+let pageManager:PageManager;
+test.beforeEach(async({browser})=>{
+    page=await browser.newPage();
+    pageManager= new PageManager(page);
+    await page.goto('/');
+    await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
+    await pageManager.onHomePage().clickOnNewArticle();
+    await pageManager.onCreateArticlePage().createNewArticle(articleName,articleOverview,articleDescription,tag);
+    const createdArticle=await pageManager.onArticlePage().getCreatedArticleName();
+    await expect(createdArticle).toHaveText(articleName);
 })
-test('should be able to edit an already created article',async({page})=>{
+test('should be able to edit a created article',async({})=>{
+    await pageManager.onArticlePage().clickEditArticleButton(articleName);
+    const articleNameInEditPage=pageManager.onCreateArticlePage().getArticleNameInEditPage();
+    await expect(articleNameInEditPage).toHaveValue(articleName);
+    await pageManager.onCreateArticlePage().editArticle(newarticleName,newarticleDescription,newtag);
+    const articleDetails= await pageManager.onArticlePage().getArticleDetails();
+    console.log(articleDetails[0],' ',articleDetails[1],' ',articleDetails[2]);
+    expect(articleDetails[0]).toBe(newarticleName);
+    expect(articleDetails[1]).toBe(newarticleDescription);
+    expect(articleDetails[2]).toEqual([' '+tag+' ',' '+newtag+' ']);
     
+
 })
