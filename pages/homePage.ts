@@ -9,6 +9,7 @@ export class HomePage{
     private globalFeedLink: Locator;
     private articlesList: Locator;
     private homePageMenu:   Locator;
+    private articlesTag:Locator;
 
     constructor(page:Page){
         this.page   =   page;
@@ -16,6 +17,7 @@ export class HomePage{
         this.newArticleLink =   this.page.getByText('New Article');
         this.articlesList   =   this.page.locator('div.article-preview h1');
         this.homePageMenu   =   this.page.locator('.navbar-nav li');
+        this.articlesTag    =   this.page.locator('ul.tag-list');
     }
     async getTagsCount(tagValue:string){
         let countOfExitingTags=0;
@@ -41,12 +43,25 @@ export class HomePage{
         return this.articlesList.first().click();
     }
 
-    verifyHomePage(){
-        return this.homePageMenu.first();
-    }
-  
     getPopularTags():Locator{
         return this.popularTags;
+    }
+
+    async verifyArticlesInATag(tagName:string){
+        let tagMatch=false;
+        await this.popularTags.filter({hasText:tagName}).click();
+        await this.getFirstArticleOnTheList().waitFor({ state: 'visible' });
+        for(const tagSet of await this.articlesTag.all()){
+            const tagsWithinArticle= tagSet.locator('li.tag-pill');
+            for(const tags of await tagsWithinArticle.all()){
+                const tag=(await tags.textContent())?.trim();
+                if(tag==tagName){
+                    tagMatch=true;
+                    break;
+                }
+            }
+        }
+        return tagMatch;
     }
 
 }

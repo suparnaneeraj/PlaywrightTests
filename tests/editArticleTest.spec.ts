@@ -32,6 +32,6 @@ test('should be able to edit a created article',async({})=>{
     expect(articleDetails[0]).toBe(newarticleName);
     expect(articleDetails[1]).toBe(newarticleDescription);
     expect(articleDetails[2]).toEqual([' '+tag+' ',' '+newtag+' ']);
-    
 
 })
+
