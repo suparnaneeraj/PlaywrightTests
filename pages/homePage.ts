@@ -6,7 +6,7 @@ export class HomePage{
     private readonly page: Page;
     private popularTags:    Locator;
     private newArticleLink: Locator;
-    private globalFeedLink: Locator;
+    //private globalFeedLink: Locator;
     private articlesList: Locator;
     private homePageMenu:   Locator;
     private articlesTag:Locator;
@@ -49,7 +49,7 @@ export class HomePage{
 
     async verifyArticlesInATag(tagName:string){
         let tagMatch=false;
-        await this.popularTags.filter({hasText:tagName}).click();
+        await this.popularTags.getByText(tagName,{exact:true}).click();
         await this.getFirstArticleOnTheList().waitFor({ state: 'visible' });
         for(const tagSet of await this.articlesTag.all()){
             const tagsWithinArticle= tagSet.locator('li.tag-pill');
@@ -62,6 +62,14 @@ export class HomePage{
             }
         }
         return tagMatch;
+    }
+
+    async likeArticle(articleName:string,clickLikeRequired:number){
+        const likeLocator=this.page.locator('.article-preview').filter({has:this.page.getByRole('heading',{name:articleName})}).locator('app-favorite-button button');
+        if(clickLikeRequired){
+            likeLocator.click();
+        }
+        return likeLocator;
     }
 
 }

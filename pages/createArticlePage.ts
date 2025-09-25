@@ -43,5 +43,6 @@ export class CreateArticlePage{
     getArticleNameInEditPage():Locator{
         return this.articleTitleField;
     }
+    
 }
 
