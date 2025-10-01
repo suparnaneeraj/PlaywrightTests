@@ -20,7 +20,8 @@ test.beforeEach(async({browser})=>{
     await pageManager.onHomePage().clickOnNewArticle();
     await pageManager.onCreateArticlePage().createNewArticle(articleName,articleOverview,articleDescription,tag);
     const createdArticle=pageManager.onArticlePage().getCreatedArticleName(); 
-    await expect(createdArticle).toHaveText(articleName,{ timeout: 10000 });
+    await expect(createdArticle).toBeVisible();
+    await expect(createdArticle).toHaveText(articleName);
 })
 test('should be able to edit a created article',async({})=>{
     await pageManager.onArticlePage().clickEditArticleButton(articleName);
