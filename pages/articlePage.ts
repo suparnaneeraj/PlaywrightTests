@@ -38,11 +38,11 @@ export class ArticlePage{
         await this.editArticleButton.click();
     }
 
-    async getArticleDetails(){
-        const articleNameLocator=await this.createdArticleName.textContent();
-        const articleDescriptionLocator=await this.articleDescription.textContent();
-        const tags= await this.tags.allTextContents();
-        return [articleNameLocator,articleDescriptionLocator,tags];
+    async getArticleDetails():Promise<[Locator, Locator, Locator[]]>{
+        const articleNameLocator= this.createdArticleName;
+        const articleDescriptionLocator= this.articleDescription;
+        const tagNames=  await this.tags.all();
+        return [articleNameLocator,articleDescriptionLocator,tagNames];
     }
 
 }
