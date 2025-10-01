@@ -6,10 +6,10 @@ const password=process.env.PASSWORD!
 let articleName='NewArticleToedit';
 let articleOverview='ArticleOverview';
 let articleDescription='NewArticleDescription';
-let tag=['NewTag'];
+let tag=['Newtag'];
 let newarticleName='NewArticleToedit1';
 let newarticleDescription='NewArticleDescription1';
-let newtag='NewTag1';
+let newtag='newtag1';
 let page:Page;
 let pageManager:PageManager;
 test.beforeEach(async({browser})=>{
@@ -19,7 +19,7 @@ test.beforeEach(async({browser})=>{
     await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
     await pageManager.onHomePage().clickOnNewArticle();
     await pageManager.onCreateArticlePage().createNewArticle(articleName,articleOverview,articleDescription,tag);
-    const createdArticle=await pageManager.onArticlePage().getCreatedArticleName();
+    const createdArticle=pageManager.onArticlePage().getCreatedArticleName();
     await expect(createdArticle).toHaveText(articleName);
 })
 test('should be able to edit a created article',async({})=>{

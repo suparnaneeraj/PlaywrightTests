@@ -20,7 +20,7 @@ export class ArticlePage{
     
     }
 
-    async getCreatedArticleName(){
+    getCreatedArticleName(){
         return  this.createdArticleName;
     }
     getTags():Locator{
