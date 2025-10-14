@@ -38,3 +38,5 @@ test.describe('Verifies the articles listed',()=>{
         })
     
 })
+
+//Refactor the code to accept data dynamically not hardcoded
