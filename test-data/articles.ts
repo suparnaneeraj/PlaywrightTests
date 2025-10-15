@@ -1,6 +1,13 @@
 import { faker } from '@faker-js/faker';
 
-export function generateArticle(type: 'basic' | 'oneTag' | 'multiTag' | 'existingTags') {
+export interface Article {
+  title: string;
+  overview: string;
+  description: string;
+  tags?: string[];
+}
+
+export function generateArticle(type: 'basic' | 'oneTag' | 'multiTag' | 'existingTags'): Article {
   switch (type) {
     case 'basic':
       return {
