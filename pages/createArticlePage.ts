@@ -30,12 +30,15 @@ export class CreateArticlePage{
         await this.submitArticleButton.click();
     }
 
-    async editArticle(newArticleName:string, newDescription:string,  newTag:string){
+    async editArticle(newArticleName:string, newDescription:string,  newTag?:string[]){
         await this.articleTitleField.clear();
         await this.articleTitleField.fill(newArticleName);
         await this.articleDescriptionField.clear()
         await this.articleDescriptionField.fill(newDescription);
-        await this.tagsField.fill(newTag);
+        if (newTag?.length) {
+            await this.tagsField.fill(newTag[0]);
+        }
+        
         await this.page.keyboard.press('Enter');  
         await this.submitArticleButton.click();
     }
