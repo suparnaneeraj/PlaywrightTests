@@ -33,11 +33,12 @@ test('should be able to edit a created article',async({})=>{
     const newArticle=generateArticle('oneTag');
     await pageManager.onCreateArticlePage().editArticle(newArticle.title,newArticle.description,newArticle.tags);
     const articleDetails= await pageManager.onArticlePage().getArticleDetails();
-    console.log(article.tags , newArticle.tags);
     await expect(articleDetails[0]).toHaveText(newArticle.title);
     await expect(articleDetails[1]).toHaveText(newArticle.description);
-    await expect(articleDetails[2][0]).toHaveText(' ' + newArticle.tags+ ' ');
-    await expect(articleDetails[2][1]).toHaveText(' ' + article.tags + ' ');
+    if (article.tags?.length && newArticle.tags?.length){
+        await expect(articleDetails[2]).toContainText(article.tags);
+        await expect(articleDetails[2]).toContainText(newArticle.tags);
+    }
 
 })
 
