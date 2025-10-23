@@ -9,9 +9,11 @@ export class ArticlePage{
     private homePageLink: Locator;
     private editArticleButton:  Locator;
     private articleDescription:Locator;
+    private allTags:Locator;
     constructor(page:Page){
         this.page   =   page;
         this.createdArticleName =   this.page.locator('.container h1');
+        this.allTags    =   this.page.locator('.tag-list');
         this.tags   =   this.page.locator('.tag-pill');
         this.deleteArticleButton    =   this.page.locator('div.container').filter({has:this.page.locator('h1')}).getByRole('button',{name:'Delete Article'});
         this.homePageLink   =   this.page.getByText('Home');
@@ -38,11 +40,11 @@ export class ArticlePage{
         await this.editArticleButton.click();
     }
 
-    async getArticleDetails():Promise<[Locator, Locator, Locator[]]>{
+    async getArticleDetails():Promise<[Locator, Locator, Locator]>{
         const articleNameLocator= this.createdArticleName;
         const articleDescriptionLocator= this.articleDescription;
-        const tagNames=  await this.tags.all();
-        return [articleNameLocator,articleDescriptionLocator,tagNames];
+        const tagNames= this.allTags;
+       return [articleNameLocator,articleDescriptionLocator,tagNames];
     }
 
 }
