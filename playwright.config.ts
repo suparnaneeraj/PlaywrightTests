@@ -42,7 +42,17 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testMatch: "**/tests/ui/**/*.spec.ts",
     },
+    {
+      name: 'api',
+       use: {
+        channel: "chromium",
+        headless: true,
+      },
+      testMatch: "**/tests/api/**/*.spec.ts",
+    
+    }
 
     /* Test against mobile viewports. */
     // {
