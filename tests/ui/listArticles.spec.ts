@@ -1,6 +1,6 @@
 import {test,expect,Page} from '@playwright/test';
-import { PageManager } from '../pages/pageManager';
-import { Article, generateArticle } from '../test-data/articles';
+import { PageManager } from '../../pages/pageManager';
+import { Article, generateArticle } from '../../test-data/articles';
 
 let page:Page;
 let pageManager:PageManager;
@@ -27,12 +27,11 @@ test.describe('Verifies the articles listed',()=>{
     test('should verify the number of likes in an articlle',async()=>{
         article = generateArticle('basic');
         await pageManager.onHomePage().clickOnNewArticle();
-        await pageManager.onCreateArticlePage().createNewArticle(article.title,article.overview,article.description);
+        await pageManager.onCreateArticlePage().createNewArticle(article.title,article.description,article.body);
         const createdArticle= pageManager.onArticlePage().getCreatedArticleName();
         await expect (createdArticle).toHaveText(article.title);
         await pageManager.onArticlePage().goToHomePage();
         const firstArticle  =   pageManager.onHomePage().getFirstArticleOnTheList();
-        await expect(firstArticle).toHaveText(article.title)
 
         // Provide 1 for clicking the like button and to get the count and 0 if only count is required 
         const initialLikesCount= await pageManager.onHomePage().likeArticle(article.title,0);

@@ -1,25 +1,28 @@
 import { APIRequestContext } from "@playwright/test";
 
+const username = process.env.USERNAME;
+const passwrd = process.env.PASSWORD;
+const baseURL = process.env.BASE_URL;
+
 export class LoginAPI{
+
     apiRequest: APIRequestContext;
-    baseURL    =   process.env.BASE_URL;
+    
     constructor(apiRequest:APIRequestContext){
         this.apiRequest =   apiRequest;    
     }
-    async loginToApp(){  
-        const loginURL  =   `${this.baseURL}/api/users/login`;
+    async loginAPI(usernameReceived? :string, passwordReceived?:string){  
+        const loginURL  =   `${baseURL}/api/users/login`;
         const loginPayload =    {
             user:{
-                email: process.env.USERNAME,
-                password: process.env.PASSWORD,
+                email: usernameReceived || username ,
+                password: passwordReceived || passwrd,
             },
         };
         const loginResponse = await this.apiRequest.post(loginURL,{
             data: loginPayload,
 
         });
-        const loginResponseBody =   await loginResponse.json();
-        const token= loginResponseBody.user.token;
-        return token;
+        return loginResponse ;
     }
 }

@@ -8,3 +8,6 @@ node_modules
 playwright-report
 downloads
 test-results
+
+##Secrets
+env/.env
