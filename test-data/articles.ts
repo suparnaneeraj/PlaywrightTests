@@ -2,9 +2,9 @@ import { faker } from '@faker-js/faker';
 
 export interface Article {
   title: string;
-  overview: string;
   description: string;
-  tags?: string[];
+  body: string;
+  tagList?: string[];
 }
 
 export function generateArticle(type: 'basic' | 'oneTag' | 'multiTag' | 'existingTags'): Article {
@@ -12,33 +12,33 @@ export function generateArticle(type: 'basic' | 'oneTag' | 'multiTag' | 'existin
     case 'basic':
       return {
         title: faker.lorem.words(2),
-        overview: faker.lorem.sentence(),
-        description: faker.lorem.paragraphs(2),
-        tags: [],
+        description: faker.lorem.sentence(),
+        body: faker.lorem.paragraphs(2),
+        tagList: [],
       };
 
     case 'oneTag':
       return {
         title: faker.lorem.words(2),
-        overview: faker.lorem.sentence(),
-        description: faker.lorem.paragraphs(2),
-        tags: [faker.hacker.noun()],
+        description: faker.lorem.sentence(),
+        body: faker.lorem.paragraphs(2),
+        tagList: [faker.hacker.noun()],
       };
 
     case 'multiTag':
       return {
         title: faker.lorem.words(2),
-        overview: faker.lorem.sentence(),
-        description: faker.lorem.paragraphs(2),
-        tags: [faker.hacker.noun(), faker.color.human()],
+        description: faker.lorem.sentence(),
+        body: faker.lorem.paragraphs(2),
+        tagList: [faker.hacker.noun(), faker.color.human()],
       };
 
     case 'existingTags':
       return {
         title: faker.lorem.words(2),
-        overview: faker.lorem.sentence(),
-        description: faker.lorem.paragraphs(2),
-        tags: ['YouTube'],
+        description: faker.lorem.sentence(),
+        body: faker.lorem.paragraphs(2),
+        tagList: ['YouTube'],
       };
 
     default:
