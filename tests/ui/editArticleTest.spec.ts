@@ -21,7 +21,7 @@ test.beforeEach(async({browser})=>{
     await page.goto('/');
     await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
     await pageManager.onHomePage().clickOnNewArticle();
-    await pageManager.onCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tags);
+    await pageManager.onCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tagList);
     const createdArticle=pageManager.onArticlePage().getCreatedArticleName(); 
     await expect(createdArticle).toBeVisible();
     await expect(createdArticle).toHaveText(article.title);
@@ -31,13 +31,13 @@ test('should be able to edit a created article',async({})=>{
     const articleNameInEditPage=pageManager.onCreateArticlePage().getArticleNameInEditPage();
     await expect(articleNameInEditPage).toHaveValue(article.title);
     const newArticle=generateArticle('oneTag');
-    await pageManager.onCreateArticlePage().editArticle(newArticle.title,newArticle.body,newArticle.tags);
+    await pageManager.onCreateArticlePage().editArticle(newArticle.title,newArticle.body,newArticle.tagList);
     const articleDetails= await pageManager.onArticlePage().getArticleDetails();
     await expect(articleDetails[0]).toHaveText(newArticle.title);
     await expect(articleDetails[1]).toHaveText(newArticle.body);
-    if (article.tags?.length && newArticle.tags?.length){
-        await expect(articleDetails[2]).toContainText(article.tags);
-        await expect(articleDetails[2]).toContainText(newArticle.tags);
+    if (article.tagList?.length && newArticle.tagList?.length){
+        await expect(articleDetails[2]).toContainText(article.tagList);
+        await expect(articleDetails[2]).toContainText(newArticle.tagList);
     }
 
 })
