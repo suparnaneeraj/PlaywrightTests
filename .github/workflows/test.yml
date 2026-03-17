@@ -20,7 +20,7 @@ jobs:
           run:  npx playwright test
         - name: Generate Allure report
           if: ${{ !cancelled() }}
-          run: npx allure generate allure-results --clean -o allure-report
+          run: npx allure-commandline generate allure-results --clean -o allure-report
 
         - name: Upload Allure report
           if: ${{ !cancelled() }}
