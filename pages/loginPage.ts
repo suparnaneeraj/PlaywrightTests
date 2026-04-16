@@ -14,6 +14,9 @@ export class LoginPage{
         this.passwordField  =   this.page.getByRole('textbox',{name:'Password'});
         this.signInButton   =   this.page.getByRole('button',{name:'Sign in'});
     }
+    async navigateToLoginPage(){
+        await this.page.goto('/');
+    }
     async loginWithEmailAndPassword(email:string,password:string){
         await this.signInLink.click();
         await this.emailField.fill(email);

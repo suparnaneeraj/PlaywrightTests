@@ -20,16 +20,16 @@ export class PageManager{
 
     }
 
-    onLoginPage(){
+    getLoginPage(){
         return this.loginPage;
     }
-    onHomePage(){
+    getHomePage(){
         return this.homePage;
     }
-    onCreateArticlePage(){
+    getCreateArticlePage(){
         return this.createArticlePage;
     }
-    onArticlePage(){
+    getArticlePage(){
         return this.articlePage;
     }
 

@@ -1,5 +1,4 @@
-import {test,Page, expect } from '@playwright/test';
-import { PageManager } from '../../pages/pageManager';
+import {test, expect } from '../fixtures';
 import { Article, generateArticle } from '../../test-data/articles';
 
 const username=process.env.USERNAME!;
@@ -11,28 +10,25 @@ let tag=['Newtag'];
 let newarticleName='NewArticleToedit1';
 let newarticleDescription='NewArticleDescription1';
 let newtag='newtag1';
-let page:Page;
-let pageManager:PageManager;
 let article : Article;
-test.beforeEach(async({browser})=>{
-    page=await browser.newPage();
-    pageManager= new PageManager(page);
+
+test.beforeEach(async({pageManager, page})=>{
     article = generateArticle('oneTag');
     await page.goto('/');
-    await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
-    await pageManager.onHomePage().clickOnNewArticle();
-    await pageManager.onCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tagList);
-    const createdArticle=pageManager.onArticlePage().getCreatedArticleName(); 
+    await pageManager.getLoginPage().loginWithEmailAndPassword(username,password);
+    await pageManager.getHomePage().clickOnNewArticle();
+    await pageManager.getCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tagList);
+    const createdArticle=pageManager.getArticlePage().getCreatedArticleName(); 
     await expect(createdArticle).toBeVisible();
     await expect(createdArticle).toHaveText(article.title);
 })
-test('should be able to edit a created article',async({})=>{
-    await pageManager.onArticlePage().clickEditArticleButton(article.title);
-    const articleNameInEditPage=pageManager.onCreateArticlePage().getArticleNameInEditPage();
+test('should be able to edit a created article',async({pageManager})=>{
+    await pageManager.getArticlePage().clickEditArticleButton(article.title);
+    const articleNameInEditPage=pageManager.getCreateArticlePage().getArticleNameInEditPage();
     await expect(articleNameInEditPage).toHaveValue(article.title);
     const newArticle=generateArticle('oneTag');
-    await pageManager.onCreateArticlePage().editArticle(newArticle.title,newArticle.body,newArticle.tagList);
-    const articleDetails= await pageManager.onArticlePage().getArticleDetails();
+    await pageManager.getCreateArticlePage().editArticle(newArticle.title,newArticle.body,newArticle.tagList);
+    const articleDetails= await pageManager.getArticlePage().getArticleDetails();
     await expect(articleDetails[0]).toHaveText(newArticle.title);
     await expect(articleDetails[1]).toHaveText(newArticle.body);
     if (article.tagList?.length && newArticle.tagList?.length){

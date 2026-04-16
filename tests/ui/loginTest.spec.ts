@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test'
+import {test, expect} from '../fixtures';
 import { PageManager} from '../../pages/pageManager'
 
 const username=process.env.USERNAME!;
@@ -7,16 +7,14 @@ test.beforeEach(async({page})=>{
     await page.goto('/');
 })
 
-test('User should login successfully with valid credentials',async({page})=>{
-    const pageManager=new PageManager(page)
-    await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
-    const articleList=pageManager.onHomePage().getFirstArticleOnTheList();
+test('User should login successfully with valid credentials',async({pageManager})=>{
+    await pageManager.getLoginPage().loginWithEmailAndPassword(username,password);
+    const articleList=pageManager.getHomePage().getFirstArticleOnTheList();
     await expect(articleList).toBeVisible();
 
 })
-test('Login fails with invalid credentials',async({page})=>{
-    const pageManager=new PageManager(page)
-    await pageManager.onLoginPage().loginWithEmailAndPassword('playwright_automation1@test.com','Automation1')
-    const firstArticle= pageManager.onHomePage().getFirstArticleOnTheList();
+test('Login fails with invalid credentials',async({pageManager})=>{
+    await pageManager.getLoginPage().loginWithEmailAndPassword('playwright_automation1@test.com','Automation1')
+    const firstArticle= pageManager.getHomePage().getFirstArticleOnTheList();
     await expect(firstArticle).not.toBeVisible();
 })
