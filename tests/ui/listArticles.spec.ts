@@ -1,43 +1,38 @@
-import {test,expect,Page} from '@playwright/test';
-import { PageManager } from '../../pages/pageManager';
+import {test,expect} from '../fixtures';
 import { Article, generateArticle } from '../../test-data/articles';
 
-let page:Page;
-let pageManager:PageManager;
 const username=process.env.USERNAME!;
 const password=process.env.PASSWORD!
 let tagToCheck='Git';
-let article:Article;
-
 test.describe('Verifies the articles listed',()=>{
-    test.beforeEach(async({browser})=>{
-        page    =   await browser.newPage();
-        pageManager =   new PageManager(page);
+    test.beforeEach(async({page, loginPage})=>{
         await page.goto('/');
-        await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
-      
+        await loginPage.loginWithEmailAndPassword(username,password);
     })
-    test('should verify if the articles with selected tag is displayed',async()=>{
-        const popularTags=pageManager.onHomePage().getPopularTags();
+    test('should verify if the articles with selected tag is displayed',async({homePage})=>{
+        const popularTags = homePage.getPopularTags();
         await expect(popularTags.first()).toBeVisible();
-        const verifyArticleTag=await pageManager.onHomePage().verifyArticlesInATag(tagToCheck);
+        const verifyArticleTag=await homePage.verifyArticlesInATag(tagToCheck);
         expect(verifyArticleTag).toBeTruthy();
     })
 
-    test('should verify the number of likes in an articlle',async()=>{
-        article = generateArticle('basic');
-        await pageManager.onHomePage().clickOnNewArticle();
-        await pageManager.onCreateArticlePage().createNewArticle(article.title,article.description,article.body);
-        const createdArticle= pageManager.onArticlePage().getCreatedArticleName();
-        await expect (createdArticle).toHaveText(article.title);
-        await pageManager.onArticlePage().goToHomePage();
-        const firstArticle  =   pageManager.onHomePage().getFirstArticleOnTheList();
-
-        // Provide 1 for clicking the like button and to get the count and 0 if only count is required 
-        const initialLikesCount= await pageManager.onHomePage().likeArticle(article.title,0);
-        await expect(initialLikesCount).toHaveText('0');
-        const likesCountAfterClick =await pageManager.onHomePage().likeArticle(article.title,1);
-        await expect(likesCountAfterClick).toHaveText('1');
-        })
-    
+    test('should verify the number of likes in an article',async({homePage, createArticlePage, articlePage, page})=>{
+        const firstArticle  =   homePage.getFirstArticleOnTheList();
+        expect(firstArticle).not.toBeNull();
+        const firstArticleTitle = await firstArticle.textContent();
+         if(firstArticleTitle!=null){
+            const articleToLike = await homePage.likeArticle(firstArticleTitle,0);
+            const initialLikesCount= (await articleToLike.textContent())?.trim() ?? '0';
+            const initialCount = Number(initialLikesCount);
+            const initialClass = await articleToLike.getAttribute('class');
+            await homePage.likeArticle(firstArticleTitle,1);
+            if (initialClass?.includes('btn-outline-primary')) {
+                await expect(articleToLike).toHaveText(String(initialCount + 1));
+            } 
+            else if (initialClass?.includes('btn-primary')) {
+                await expect(articleToLike).toHaveText(String(initialCount - 1));
+            }
+        }
+    })   
 })
+

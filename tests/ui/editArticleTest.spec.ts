@@ -1,44 +1,66 @@
-import {test,Page, expect } from '@playwright/test';
-import { PageManager } from '../../pages/pageManager';
+import {test, expect } from '../fixtures';
 import { Article, generateArticle } from '../../test-data/articles';
 
 const username=process.env.USERNAME!;
 const password=process.env.PASSWORD!
-let articleName='NewArticleToedit';
-let articleOverview='ArticleOverview';
-let articleDescription='NewArticleDescription';
-let tag=['Newtag'];
-let newarticleName='NewArticleToedit1';
-let newarticleDescription='NewArticleDescription1';
-let newtag='newtag1';
-let page:Page;
-let pageManager:PageManager;
 let article : Article;
-test.beforeEach(async({browser})=>{
-    page=await browser.newPage();
-    pageManager= new PageManager(page);
+let editedArticleSlug: string;
+let createdArticleSlug: string;
+let token: string;
+test.beforeEach(async({loginPage, page, homePage, createArticlePage, articlePage})=>{
     article = generateArticle('oneTag');
     await page.goto('/');
-    await pageManager.onLoginPage().loginWithEmailAndPassword(username,password);
-    await pageManager.onHomePage().clickOnNewArticle();
-    await pageManager.onCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tagList);
-    const createdArticle=pageManager.onArticlePage().getCreatedArticleName(); 
+    const loginResponsePromise = page.waitForResponse(response =>
+    response.url().includes('/api/users/login') &&
+    response.request().method() === 'POST'
+    );
+    await loginPage.loginWithEmailAndPassword(username,password);
+    const loginResponse = await loginResponsePromise;
+    const loginResponseBody = await loginResponse.json();
+    token = loginResponseBody.user.token;
+    await homePage.clickOnNewArticle();
+    const createArticleResponsePromise = page.waitForResponse(response =>
+    response.url().includes('/api/articles') &&
+    response.request().method() === 'POST'
+    );
+    await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
+    const createArticleResponse = await createArticleResponsePromise;
+    const createArticleResponseBody = await createArticleResponse.json();
+    createdArticleSlug = createArticleResponseBody.article.slug;  
+    const createdArticle = articlePage.getCreatedArticleName(); 
     await expect(createdArticle).toBeVisible();
     await expect(createdArticle).toHaveText(article.title);
 })
-test('should be able to edit a created article',async({})=>{
-    await pageManager.onArticlePage().clickEditArticleButton(article.title);
-    const articleNameInEditPage=pageManager.onCreateArticlePage().getArticleNameInEditPage();
+test('should edit title, body, and tags of an existing article',async({createArticlePage, articlePage, page})=>{
+    await articlePage.clickEditArticleButton(article.title);
+    const articleNameInEditPage=createArticlePage.getArticleNameInEditPage();
     await expect(articleNameInEditPage).toHaveValue(article.title);
     const newArticle=generateArticle('oneTag');
-    await pageManager.onCreateArticlePage().editArticle(newArticle.title,newArticle.body,newArticle.tagList);
-    const articleDetails= await pageManager.onArticlePage().getArticleDetails();
-    await expect(articleDetails[0]).toHaveText(newArticle.title);
-    await expect(articleDetails[1]).toHaveText(newArticle.body);
-    if (article.tagList?.length && newArticle.tagList?.length){
-        await expect(articleDetails[2]).toContainText(article.tagList);
-        await expect(articleDetails[2]).toContainText(newArticle.tagList);
+    const editArticleResponsePromise = page.waitForResponse(response =>
+    response.url().includes(`/api/articles/${createdArticleSlug}`) &&
+    response.request().method() === 'PUT'
+    );
+    await createArticlePage.editArticle(newArticle.title,newArticle.body,newArticle.tagList);
+    const editArticleResponse = await editArticleResponsePromise;
+    const editArticleResponseBody = await editArticleResponse.json();
+    editedArticleSlug = editArticleResponseBody.article.slug;  
+    const articleDetails= articlePage.getArticleDetails();
+    await expect(articleDetails.title).toHaveText(newArticle.title);
+    await expect(articleDetails.body).toHaveText(newArticle.body);
+    if (article.tagList?.length) {
+        for (const tag of article.tagList) {
+        await expect(articleDetails.tags).toContainText(tag);
+        }
+    }
+    if (newArticle.tagList?.length) {
+    for (const tag of newArticle.tagList) {
+      await expect(articleDetails.tags).toContainText(tag);
+    }
     }
 
 })
 
+test.afterEach(async({deleteArticleAPI})=>{
+    const response = await deleteArticleAPI.deleteArticleAPI(editedArticleSlug,token);
+    expect(response.status()).toBe(204);
+})
