@@ -40,11 +40,15 @@ export class ArticlePage{
         await this.editArticleButton.click();
     }
 
-    async getArticleDetails():Promise<[Locator, Locator, Locator]>{
+    getArticleDetails(){
         const articleNameLocator= this.createdArticleName;
         const articleDescriptionLocator= this.articleDescription;
         const tagNames= this.allTags;
-       return [articleNameLocator,articleDescriptionLocator,tagNames];
+        return {
+            title: articleNameLocator,
+            body:  articleDescriptionLocator,
+            tags: tagNames
+        };
     }
 
 }

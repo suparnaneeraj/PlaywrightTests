@@ -1,42 +1,42 @@
 import {expect, test} from '../fixtures';
 import { generateArticle } from '../../test-data/articles';
 
-test.beforeEach(async({pageManager,page})=>{
+test.beforeEach(async({loginPage,page, homePage})=>{
     await page.goto('/');
-    await pageManager.getLoginPage().loginWithEmailAndPassword('playwright_automation@test.com','Automation1')
-    await pageManager.getHomePage().clickOnNewArticle()
+    await loginPage.loginWithEmailAndPassword('playwright_automation@test.com','Automation1')
+    await homePage.clickOnNewArticle()
     
 })
 
-test('should delete an already created article successfully',async({pageManager})=>{
+test('should delete an already created article successfully',async({articlePage, createArticlePage, homePage})=>{
     const article = generateArticle('basic');
-    await pageManager.getCreateArticlePage().createNewArticle(article.title,article.description,article.body);
-    await pageManager.getArticlePage().deleteArticle()
-    const firstArticle= pageManager.getHomePage().getFirstArticleOnTheList()
+    await createArticlePage.createNewArticle(article.title,article.description,article.body);
+    await articlePage.deleteArticle()
+    const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title);
 })
 
-test('should delete the tag from popular tags when the only article with the tag is deleted',async({pageManager})=>{
+test('should delete the tag from popular tags when the only article with the tag is deleted',async({createArticlePage, homePage,articlePage})=>{
     const article = generateArticle('oneTag');
-    await pageManager.getCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tagList);
-    await pageManager.getArticlePage().deleteArticle()
-    const firstArticle= pageManager.getHomePage().getFirstArticleOnTheList()
+    await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
+    await articlePage.deleteArticle()
+    const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title)
     if (article.tagList?.length) {
-        const tagCount=await pageManager.getHomePage().getTagsCount(article.tagList[0]);
+        const tagCount=await homePage.getTagsCount(article.tagList[0]);
         expect(tagCount).toBeFalsy();
     }
 
 })
-test('should not delete the tag from popular tags when an article with the deleted tag exist',async({pageManager})=>{
+test('should not delete the tag from popular tags when an article with the deleted tag exist',async({createArticlePage, homePage, articlePage})=>{
     let countOfExitingTags=0;
     const article = generateArticle('existingTags');
-    await pageManager.getCreateArticlePage().createNewArticle(article.title,article.description,article.body,article.tagList);
-    await pageManager.getArticlePage().deleteArticle()
-    const firstArticle= pageManager.getHomePage().getFirstArticleOnTheList()
+    await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
+    await articlePage.deleteArticle()
+    const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title)
     if (article.tagList?.length) {
-        const tagCount=await pageManager.getHomePage().getTagsCount(article.tagList[0]);
+        const tagCount=await homePage.getTagsCount(article.tagList[0]);
         expect(tagCount).toBeTruthy();
     }
     
