@@ -16,7 +16,7 @@ test.describe('Verifies the articles listed',()=>{
         expect(verifyArticleTag).toBeTruthy();
     })
 
-    test('should verify the number of likes in an article',async({homePage, createArticlePage, articlePage, page})=>{
+    test('should verify the number of likes in an article',async({homePage})=>{
         const firstArticle  =   homePage.getFirstArticleOnTheList();
         expect(firstArticle).not.toBeNull();
         const firstArticleTitle = await firstArticle.textContent();

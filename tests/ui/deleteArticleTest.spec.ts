@@ -4,7 +4,7 @@ import { generateArticle } from '../../test-data/articles';
 test.beforeEach(async({loginPage,page, homePage})=>{
     await page.goto('/');
     await loginPage.loginWithEmailAndPassword('playwright_automation@test.com','Automation1')
-    await homePage.clickOnNewArticle()
+    await homePage.header.clickNewArticle();
     
 })
 

@@ -1,5 +1,6 @@
 import {Page} from '@playwright/test'
 import { Locator } from '@playwright/test';
+import { HeaderComponent } from './headerComponent';
 
 
 export class HomePage{
@@ -10,6 +11,7 @@ export class HomePage{
     private articlesList: Locator;
     private homePageMenu:   Locator;
     private articlesTag:Locator;
+    readonly header: HeaderComponent;
 
     constructor(page:Page){
         this.page   =   page;
@@ -18,6 +20,7 @@ export class HomePage{
         this.articlesList   =   this.page.locator('div.article-preview h1');
         this.homePageMenu   =   this.page.locator('.navbar-nav li');
         this.articlesTag    =   this.page.locator('ul.tag-list');
+        this.header = new HeaderComponent(this.page);
     }
     async getTagsCount(tagValue:string){
         let countOfExitingTags=0;
@@ -28,11 +31,6 @@ export class HomePage{
             }
         }
         return countOfExitingTags;
-    }
-
-
-    async clickOnNewArticle(){
-        await this.newArticleLink.click();
     }
 
     getFirstArticleOnTheList(){

@@ -18,7 +18,7 @@ test.beforeEach(async({loginPage, page, homePage, createArticlePage, articlePage
     const loginResponse = await loginResponsePromise;
     const loginResponseBody = await loginResponse.json();
     token = loginResponseBody.user.token;
-    await homePage.clickOnNewArticle();
+    await homePage.header.clickNewArticle();
     const createArticleResponsePromise = page.waitForResponse(response =>
     response.url().includes('/api/articles') &&
     response.request().method() === 'POST'
