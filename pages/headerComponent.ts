@@ -15,7 +15,7 @@ export class HeaderComponent{
         this.homePageLink = this.page.getByRole('link',{name: 'Home'});
         this.createNewArticleLink = this.page.getByRole('link',{name: 'New Article'});
         this.settingPageLink = this.page.getByRole('link',{name: 'Settings'});
-        this.profilePageLink = this.page.locator('a[href*="/profile/"]');
+        this.profilePageLink = this.page.locator('a.nav-link[href*="/profile/"]');
     }
 
     async getAppTitle(){
@@ -33,6 +33,6 @@ export class HeaderComponent{
     async clickProfile(){
         await this.profilePageLink.click();
     }   
-    
+
 
 }
