@@ -1,9 +1,7 @@
 import { APIRequestContext } from "@playwright/test";
 import { Article, generateArticle } from '../test-data/articles'
 
-const username = process.env.USERNAME!;
-const password = process.env.PASSWORD!;
-const baseURL    =   process.env.BASE_URL;
+const baseURL    =   process.env.API_URL;
 
 
 export class ArticleAPIs{

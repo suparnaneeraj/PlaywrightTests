@@ -1,24 +1,26 @@
 import {expect, test} from '../fixtures';
 import { generateArticle } from '../../test-data/articles';
 
-test.beforeEach(async({loginPage,page, homePage})=>{
-    await page.goto('/');
-    await loginPage.loginWithEmailAndPassword('playwright_automation@test.com','Automation1')
-    await homePage.header.clickNewArticle();
-    
-})
+const username = process.env.USERNAME!;
+const password = process.env.PASSWORD!;
+let authToken: string;
+let slugId : string;
 
-test('should delete an already created article successfully',async({articlePage, createArticlePage, homePage})=>{
+test('should delete an already created article successfully',async({articlePage, createArticleAPI, homePage, authToken, authenticatedPage})=>{
     const article = generateArticle('basic');
-    await createArticlePage.createNewArticle(article.title,article.description,article.body);
+    const createArticleResponseJson = await (await createArticleAPI.createArticleAPI(authToken, article)).json();
+    slugId = createArticleResponseJson.article.slug;
+    await authenticatedPage.goto(`/article/${slugId}`);
     await articlePage.deleteArticle()
     const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title);
 })
 
-test('should delete the tag from popular tags when the only article with the tag is deleted',async({createArticlePage, homePage,articlePage})=>{
+test('should delete the tag from popular tags when the only article with the tag is deleted',async({createArticleAPI, homePage,articlePage, authToken, authenticatedPage})=>{
     const article = generateArticle('oneTag');
-    await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
+    const createArticleResponseJson = await (await createArticleAPI.createArticleAPI(authToken, article)).json();
+    slugId = createArticleResponseJson.article.slug;
+    await authenticatedPage.goto(`/article/${slugId}`);
     await articlePage.deleteArticle()
     const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title)
@@ -28,10 +30,12 @@ test('should delete the tag from popular tags when the only article with the tag
     }
 
 })
-test('should not delete the tag from popular tags when an article with the deleted tag exist',async({createArticlePage, homePage, articlePage})=>{
+test('should not delete the tag from popular tags when an article with the deleted tag exist',async({createArticleAPI, homePage, articlePage, authToken, authenticatedPage})=>{
     let countOfExitingTags=0;
     const article = generateArticle('existingTags');
-    await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
+    const createArticleResponseJson = await (await createArticleAPI.createArticleAPI(authToken, article)).json();
+    slugId = createArticleResponseJson.article.slug;
+    await authenticatedPage.goto(`/article/${slugId}`);
     await articlePage.deleteArticle()
     const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title)

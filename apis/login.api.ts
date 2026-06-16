@@ -2,7 +2,7 @@ import { APIRequestContext } from "@playwright/test";
 
 const username = process.env.USERNAME;
 const passwrd = process.env.PASSWORD;
-const baseURL = process.env.BASE_URL;
+const baseURL = process.env.API_URL;
 
 export class LoginAPI{
 
