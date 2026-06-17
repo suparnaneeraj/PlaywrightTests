@@ -1,9 +1,7 @@
 import {expect, test} from '../fixtures';
 import { generateArticle } from '../../test-data/articles';
 
-const username = process.env.USERNAME!;
-const password = process.env.PASSWORD!;
-let authToken: string;
+
 let slugId : string;
 
 test('should delete an already created article successfully',async({articlePage, createArticleAPI, homePage, authToken, authenticatedPage})=>{
