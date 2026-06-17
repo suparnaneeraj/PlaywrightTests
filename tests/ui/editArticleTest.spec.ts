@@ -1,32 +1,16 @@
 import {test, expect } from '../fixtures';
 import { Article, generateArticle } from '../../test-data/articles';
 
-const username=process.env.USERNAME!;
-const password=process.env.PASSWORD!
 let article : Article;
 let editedArticleSlug: string;
 let createdArticleSlug: string;
 let token: string;
-test.beforeEach(async({loginPage, page, homePage, createArticlePage, articlePage})=>{
+
+test.beforeEach(async({authenticatedPage, authToken, articlePage, createArticleAPI})=>{
     article = generateArticle('oneTag');
-    await page.goto('/');
-    const loginResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/users/login') &&
-    response.request().method() === 'POST'
-    );
-    await loginPage.loginWithEmailAndPassword(username,password);
-    const loginResponse = await loginResponsePromise;
-    const loginResponseBody = await loginResponse.json();
-    token = loginResponseBody.user.token;
-    await homePage.header.clickNewArticle();
-    const createArticleResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/articles') &&
-    response.request().method() === 'POST'
-    );
-    await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
-    const createArticleResponse = await createArticleResponsePromise;
-    const createArticleResponseBody = await createArticleResponse.json();
-    createdArticleSlug = createArticleResponseBody.article.slug;  
+    const createArticleResponse = await createArticleAPI.createArticleAPI(authToken, article);
+    createdArticleSlug = (await createArticleResponse.json()).article.slug;
+    await authenticatedPage.goto(`/article/${createdArticleSlug}`);
     const createdArticle = articlePage.getCreatedArticleName(); 
     await expect(createdArticle).toBeVisible();
     await expect(createdArticle).toHaveText(article.title);
@@ -60,7 +44,7 @@ test('should edit title, body, and tags of an existing article',async({createArt
 
 })
 
-test.afterEach(async({deleteArticleAPI})=>{
-    const response = await deleteArticleAPI.deleteArticleAPI(editedArticleSlug,token);
+test.afterEach(async({deleteArticleAPI, authToken})=>{
+    const response = await deleteArticleAPI.deleteArticleAPI(editedArticleSlug,authToken);
     expect(response.status()).toBe(204);
 })

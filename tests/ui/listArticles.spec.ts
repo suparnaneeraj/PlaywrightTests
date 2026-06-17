@@ -1,14 +1,11 @@
 import {test,expect} from '../fixtures';
 import { Article, generateArticle } from '../../test-data/articles';
 
-const username=process.env.USERNAME!;
-const password=process.env.PASSWORD!
 let tagToCheck='Git';
 
 test.describe('Verifies the articles listed',()=>{
-    test.beforeEach(async({page, loginPage})=>{
-        await page.goto('/');
-        await loginPage.loginWithEmailAndPassword(username,password);
+    test.beforeEach(async({authenticatedPage})=>{
+        await authenticatedPage.goto('/');
     })
     test('should verify if the articles with selected tag is displayed',async({homePage})=>{
         const popularTags = homePage.getPopularTags();

@@ -1,20 +1,11 @@
 import {test,expect} from '../fixtures';
 import { generateArticle } from '../../test-data/articles';
 
-const username  =   process.env.USERNAME!
-const password  =   process.env.PASSWORD!
 let createdArticleSlug: string;
 let token : string;
-test.beforeEach(async({loginPage,page})=>{
-    await page.goto('/');
-    const loginResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/users/login') &&
-    response.request().method() === 'POST'
-    );
-    await loginPage.loginWithEmailAndPassword(username,password);
-    const loginResponse = await loginResponsePromise;
-    const loginResponseBody = await loginResponse.json();
-    token = loginResponseBody.user.token;
+
+test.beforeEach(async({authenticatedPage})=>{
+    await authenticatedPage.goto('/');
 })
 test('should be able to create a new article without tags successfully',async({createArticlePage, homePage, articlePage, page})=>{
     const article = generateArticle('basic');
@@ -96,7 +87,7 @@ test('should be able to create a new article with already existing tags successf
     
 })
 
-test.afterEach(async({deleteArticleAPI})=>{
-    const response = await deleteArticleAPI.deleteArticleAPI(createdArticleSlug,token);
+test.afterEach(async({deleteArticleAPI, authToken})=>{
+    const response = await deleteArticleAPI.deleteArticleAPI(createdArticleSlug,authToken);
     expect(response.status()).toBe(204);
 })
