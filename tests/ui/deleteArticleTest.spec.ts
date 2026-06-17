@@ -38,8 +38,9 @@ test('should not delete the tag from popular tags when an article with the delet
     const firstArticle= homePage.getFirstArticleOnTheList()
     await expect(firstArticle).not.toHaveText(article.title)
     if (article.tagList?.length) {
+        await expect(homePage.getPopularTags().first()).toBeVisible();
         const tagCount=await homePage.getTagsCount(article.tagList[0]);
-        expect(tagCount).toBeTruthy();
+        expect(tagCount).toBeGreaterThan(0);
     }
     
 })
