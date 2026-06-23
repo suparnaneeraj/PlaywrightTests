@@ -3,7 +3,6 @@ import { Article, generateArticle } from '../test-data/articles'
 
 const baseURL    =   process.env.API_URL;
 
-
 export class ArticleAPIs{
 
     apiRequest:APIRequestContext;
