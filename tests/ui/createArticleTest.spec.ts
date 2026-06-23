@@ -1,8 +1,8 @@
 import {test,expect} from '../fixtures';
 import { generateArticle } from '../../test-data/articles';
+import { waitForApiResponse } from '../../helpers/networkHelper';
 
 let createdArticleSlug: string;
-let token : string;
 
 test.beforeEach(async({authenticatedPage})=>{
     await authenticatedPage.goto('/');
@@ -10,12 +10,9 @@ test.beforeEach(async({authenticatedPage})=>{
 test('should be able to create a new article without tags successfully',async({createArticlePage, homePage, articlePage, page})=>{
     const article = generateArticle('basic');
     await homePage.header.clickNewArticle();
-    const createArticleResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/articles') &&
-    response.request().method() === 'POST'
-    );
-    await createArticlePage.createNewArticle(article.title,article.description,article.body);
-    const createArticleResponse = await createArticleResponsePromise;
+    const createArticleResponsePromise = waitForApiResponse(page, '/api/articles','POST');
+    await createArticlePage.createNewArticle(article.title, article.description, article.body, article.tagList);
+    const createArticleResponse =await createArticleResponsePromise;
     const createArticleResponseBody = await createArticleResponse.json();
     createdArticleSlug = createArticleResponseBody.article.slug;
     const createdArticle= articlePage.getCreatedArticleName()
@@ -24,10 +21,7 @@ test('should be able to create a new article without tags successfully',async({c
 test('should be able to create a new article with a single tag successfully',async({homePage, createArticlePage, articlePage, page})=>{
     const article = generateArticle('oneTag');
     await homePage.header.clickNewArticle();
-    const createArticleResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/articles') &&
-    response.request().method() === 'POST'
-    );
+    const createArticleResponsePromise = waitForApiResponse(page, '/api/articles','POST');
     await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
     const createArticleResponse = await createArticleResponsePromise;
     const createArticleResponseBody = await createArticleResponse.json();
@@ -45,10 +39,7 @@ test('should be able to create a new article with a single tag successfully',asy
 test('should be able to create a new article with multiple tags successfully',async({createArticlePage, homePage, articlePage, page})=>{
     const article = generateArticle('multiTag');
     await homePage.header.clickNewArticle();
-    const createArticleResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/articles') &&
-    response.request().method() === 'POST'
-    );
+    const createArticleResponsePromise = waitForApiResponse(page, '/api/articles','POST');
     await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList)
     const createArticleResponse = await createArticleResponsePromise;
     const createArticleResponseBody = await createArticleResponse.json();
@@ -63,10 +54,7 @@ test('should be able to create a new article with multiple tags successfully',as
 test('should be able to create a new article with already existing tags successfully',async({homePage, page, createArticlePage, articlePage})=>{
     const article = generateArticle('existingTags');
     await homePage.header.clickNewArticle();
-    const createArticleResponsePromise = page.waitForResponse(response =>
-    response.url().includes('/api/articles') &&
-    response.request().method() === 'POST'
-    );
+    const createArticleResponsePromise = waitForApiResponse(page, '/api/articles','POST');
     await createArticlePage.createNewArticle(article.title,article.description,article.body,article.tagList);
     const createArticleResponse = await createArticleResponsePromise;
     const createArticleResponseBody = await createArticleResponse.json();

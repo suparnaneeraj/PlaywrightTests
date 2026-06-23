@@ -1,10 +1,10 @@
 import {test, expect } from '../fixtures';
 import { Article, generateArticle } from '../../test-data/articles';
+import { waitForApiResponse } from '../../helpers/networkHelper';
 
 let article : Article;
 let editedArticleSlug: string;
 let createdArticleSlug: string;
-let token: string;
 
 test.beforeEach(async({authenticatedPage, authToken, articlePage, createArticleAPI})=>{
     article = generateArticle('oneTag');
@@ -20,10 +20,7 @@ test('should edit title, body, and tags of an existing article',async({createArt
     const articleNameInEditPage=createArticlePage.getArticleNameInEditPage();
     await expect(articleNameInEditPage).toHaveValue(article.title);
     const newArticle=generateArticle('oneTag');
-    const editArticleResponsePromise = page.waitForResponse(response =>
-    response.url().includes(`/api/articles/${createdArticleSlug}`) &&
-    response.request().method() === 'PUT'
-    );
+    const editArticleResponsePromise = waitForApiResponse(page, `/api/articles/${createdArticleSlug}`, 'PUT');
     await createArticlePage.editArticle(newArticle.title,newArticle.body,newArticle.tagList);
     const editArticleResponse = await editArticleResponsePromise;
     const editArticleResponseBody = await editArticleResponse.json();
