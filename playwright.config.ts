@@ -5,6 +5,12 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, 'env/config.env') });
 dotenv.config({ path: path.resolve(__dirname, 'env/.env') });
 
+const requiredEnv = ['APP_URL','API_URL', 'USERNAME', 'PASSWORD'];
+for (const key of requiredEnv) {
+  if (!process.env[key]) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+}
 
 export default defineConfig({
   testDir: './tests',
