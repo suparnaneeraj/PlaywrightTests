@@ -18,14 +18,15 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ?  [
-        ['github'],
-        ['html'],
-        ['allure-playwright']
-      ]
-    : [
-        ['html'],['list'],
-      ],
+  reporter: process.env.CI ? [
+      ['@estruyf/github-actions-reporter', { showError: true }],
+      ['allure-playwright'],
+    ]
+  : [
+      ['list'],
+      ['html', { open: 'never' }],
+      ['allure-playwright'],
+    ],
 
   use: {
    
